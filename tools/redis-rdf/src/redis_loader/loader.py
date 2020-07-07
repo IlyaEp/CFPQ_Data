@@ -9,12 +9,14 @@ from .triplet_loader import load_rdf_graph
 
 BLOCK_SIZE = 100
 
+
 def make_node(value: str, alias=None):
     return RedisNode(
         label='Node', alias=alias, properties={
             'value': value,
             'sha256': hashlib.sha256(str(value).encode('utf-8')).hexdigest()
         })
+
 
 def load_in_redis(rdf_graph, redis_graph: RedisGraph):
     all_nodes = dict()
@@ -34,8 +36,24 @@ def load_in_redis(rdf_graph, redis_graph: RedisGraph):
     # Create index over Nodes
     redis_graph.query("CREATE INDEX ON :Node(sha256)")
 
+    ############################# Change label on edge (only for taxnomy) #############################
+
+    map_pred = dict()
+    with open("config.txt", "r") as file:
+        for line in file:
+            map_pred.update({line.split(" ")[0]: line.replace("\n", "").split(" ")[1]})
+
+    ###################################################################################################
+
     print(f'{redis_graph.name}: Add edges to existing nodes')
     for subj, pred, obj in tqdm(rdf_graph):
+
+        ######## old -> new ########
+
+        pred = map_pred[pred]
+
+        ############################
+
         edge = RedisEdge(all_nodes[str(subj)], pred, all_nodes[str(obj)])
         edge_r = RedisEdge(all_nodes[str(obj)], f'{pred}_r', all_nodes[str(subj)])
         redis_graph.add_node(all_nodes[str(subj)])
