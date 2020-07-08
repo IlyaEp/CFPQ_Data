@@ -8,6 +8,13 @@ import logging
 
 
 def main():
+
+    ################ Attention about taxonomy ################
+
+    print("Attention!\nI work only for the graph taxonomy")
+
+    ##########################################################
+
     parser = ArgumentParser('Load rdf into RedisGraph')
 
     parser.add_argument('--host', help='redis host name', default='localhost')
