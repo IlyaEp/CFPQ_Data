@@ -49,13 +49,15 @@ def RPQ_to_nfa(lines, out):
                 true_format.append(current_edge)
                 set_label.add(edge[1])
 
+        map_digit_to_word = {i: ord(i + 65) for i in range(11)}
+
         # write to output
         with open(out, "w") as file:
             file.write(str(len(set_label)) + "\n")
             file.write("1" + "\n")
             file.write(str(size_matrix + 1) + "\n")
             for i in true_format:
-                file.write(str(i[0]) + "\n")
+                file.write(str(map_digit_to_word[i[0]]) + "\n")
                 current_size = len(i)
                 for j in range(1, current_size):
                     file.write(str(i[j][0]) + " " + str(i[j][1]) + "\n")
