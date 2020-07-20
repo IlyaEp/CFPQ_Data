@@ -78,8 +78,6 @@ def main():
     directories = os.listdir("../../../RPQ/taxonomy_data/taxonomy_queries")
     print(directories)
     for directory in directories:
-        if directory == "q_12" or directory == "q_13":
-            continue
         input = "../../../RPQ/taxonomy_data/taxonomy_queries/" + directory + "/"
         output = "../../../RPQ/taxonomy_data/taxonomy_automat/" + directory
         os.mkdir(output)
