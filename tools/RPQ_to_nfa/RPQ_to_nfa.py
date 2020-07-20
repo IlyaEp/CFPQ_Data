@@ -73,7 +73,23 @@ def RPQ_to_nfa(lines, out):
 
 
 def main():
-    RPQ_to_nfa(["S", "1 21 ", "S -> 12 (3 4)*"], "out")
+    files = [str(i) for i in range(10)]
+    print(files)
+    directories = os.listdir("../../../RPQ/taxonomy_data/taxonomy_queries")
+    print(directories)
+    for directory in directories:
+        if directory == "q_12" or directory == "q_13":
+            continue
+        input = "../../../RPQ/taxonomy_data/taxonomy_queries/" + directory + "/"
+        output = "../../../RPQ/taxonomy_data/taxonomy_automat/" + directory
+        os.mkdir(output)
+        output += "/"
+        for file in files:
+            input += file
+            output += file
+            RPQ_to_nfa(open(input, "r").readlines(), output)
+            input = input[:-1]
+            output = output[:-1]
 
 
 if __name__ == "__main__":
