@@ -1,5 +1,6 @@
 from pyformlang.regular_expression import Regex
 import os
+import re
 
 EPS_SYM = 'eps'
 SUPPORTED_REGEX_CHARS = '.*()?|'
@@ -13,10 +14,14 @@ def RPQ_to_nfa(lines, out):
         # pyformlang doesn't accept '?' quantifier, transforming to alternative expression
         body_str = body_str.replace('?', f'|{EPS_SYM}')
 
+        body_str = body_str.replace('+', '*')
+
         enfa = Regex(body_str).to_epsilon_nfa()
+        print(enfa._transition_function._transitions)
         enfa = enfa.minimize()
 
         transitions = enfa._transition_function._transitions
+        print(transitions)
 
         # create map for state names (original names are so big)
         map_states = dict()
@@ -57,32 +62,18 @@ def RPQ_to_nfa(lines, out):
             for i in true_format:
                 file.write(str(i[0]) + "\n")
                 current_size = len(i)
+                file.write(str(current_size - 1) + "\n")
                 for j in range(1, current_size):
                     file.write(str(i[j][0]) + " " + str(i[j][1]) + "\n")
 
             file.write("S" + "\n")
-            for state in enfa.final_states:
-                file.write("0" + " " + str(map_states[state]) + "\n")
+            for f_state in enfa.final_states:
+                for s_state in enfa.start_states:
+                    file.write(str(map_states[s_state]) + " " + str(map_states[f_state]) + "\n")
 
 
 def main():
-    files = [str(i) for i in range(10)]
-    print(files)
-    directories = os.listdir("../../../RPQ/taxonomy_data/taxonomy_queries")
-    print(directories)
-    for directory in directories:
-        if directory == "q_12" or directory == "q_13":
-            continue
-        input = "../../../RPQ/taxonomy_data/taxonomy_queries/" + directory + "/"
-        output = "../../../RPQ/taxonomy_data/taxonomy_automat/" + directory
-        os.mkdir(output)
-        output += "/"
-        for file in files:
-            input += file
-            output += file
-            RPQ_to_nfa(open(input, "r").readlines(), output)
-            input = input[:-1]
-            output = output[:-1]
+    RPQ_to_nfa(["S", "1 21 ", "S -> 12 (3 4)*"], "out")
 
 
 if __name__ == "__main__":
