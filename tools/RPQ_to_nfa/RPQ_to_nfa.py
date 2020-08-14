@@ -14,7 +14,7 @@ def RPQ_to_nfa(lines, out):
         # pyformlang doesn't accept '?' quantifier, transforming to alternative expression
         body_str = body_str.replace('?', f'|{EPS_SYM}')
 
-        body_str = body_str.replace('+', '*')
+        # body_str = body_str.replace('+', '*') add converter
 
         enfa = Regex(body_str).to_epsilon_nfa()
         print(enfa._transition_function._transitions)
