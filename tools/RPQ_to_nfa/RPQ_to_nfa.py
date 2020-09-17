@@ -16,13 +16,10 @@ def RPQ_to_nfa(lines, out):
 
         # body_str = body_str.replace('+', '*') add converter
 
-        enfa = Regex(body_str).to_epsilon_nfa()
-        print(enfa._transition_function._transitions)
-        enfa = enfa.minimize()
+        enfa = Regex(body_str).to_epsilon_nfa().to_deterministic().minimize()
 
         transitions = enfa._transition_function._transitions
-        print(transitions)
-
+        
         # create map for state names (original names are so big)
         map_states = dict()
         count_states = 0
